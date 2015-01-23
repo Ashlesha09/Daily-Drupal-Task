@@ -1,0 +1,9 @@
+name = products
+description = A new content type for product
+package = Core
+version = VERSION
+core = 7.x
+files[] = products.install
+files[] = products.module
+
+

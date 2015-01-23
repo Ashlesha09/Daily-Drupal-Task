@@ -1,0 +1,25 @@
+<?php
+/**
+ * Implements hook_node_info()
+	 Using this hook, a module can define one or more node types in Drupal
+ */
+function products_node_info() {
+    return array(
+        'product' => array(
+            'name' => t('Product'),
+            'base' => 'product',
+            'description' => t('You can define new Products here'),
+            'has_title' => TRUE,
+            'title_label' => t('Product title')
+         )
+    );
+}
+
+/**
+ * Implement hook_form()
+	As we have defined that this node type has a title, we need to show the title text field when the form for this node is displayed to add content. To do this, we will have to implement the hook
+ */
+function product_form($node, $form_state) {
+    return node_content_form($node, $form_state);
+		}
+		
