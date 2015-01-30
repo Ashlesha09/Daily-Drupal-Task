@@ -44,7 +44,10 @@ function _products_installed_fields() {
         'products_price' => array(
             'field_name' => 'products_price',
             'label' => $t('Price of the product'),
-            'type' => 'text'
+            'type' => 'number_decimal',
+						'settings'=> array(
+						'max_length'=>64,
+						)
         ),
     );
 }

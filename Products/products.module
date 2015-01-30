@@ -1,4 +1,6 @@
 <?php
+
+
 /**
  * Implements hook_node_info()
 	 Using this hook, a module can define one or more node types in Drupal
@@ -19,7 +21,102 @@ function products_node_info() {
  * Implement hook_form()
 	As we have defined that this node type has a title, we need to show the title text field when the form for this node is displayed to add content. To do this, we will have to implement the hook
  */
-function product_form($node, $form_state) {
+function products_form($node, $form_state) {
     return node_content_form($node, $form_state);
 		}
 		
+/**
+ * Implements hook_menu()
+ */
+function products_menu() {
+  $items = array();
+  $items['tablepage'] = array(
+    'title' => t('Products Table'),
+    'description' => t('A table for products'),
+    'page callback' => 'mytable_table_data',
+    'access arguments' => array("access content"),
+    'type' => MENU_CALLBACK
+  );
+ 
+  return $items; 
+}
+
+function mytable_table_data() {
+  // Initialising output
+  $output = '';
+ 
+  // Table header
+  $header = array(
+		array('data' => 'ID', 'field' => 'nid'),
+    array('data' => 'Title', 'field' => 'title'),
+    array('data' => 'Status', 'field' => 'status'),
+    array('data' => 'Created', 'field' => 'created'),
+    array('data' => 'Changed', 'field' => 'changed'),
+  );
+	
+	 // Setting the sort conditions
+  if(isset($_GET['sort']) && isset($_GET['order'])) {
+    // Sort it Ascending or Descending?
+    if($_GET['sort'] == 'asc')
+      $sort = 'ASC';
+    else
+      $sort = 'DESC';
+ 
+    // Which column will be sorted
+    switch($_GET['order']) {
+      case 'Title':
+        $order = 'title';
+        break;
+      case 'Status':
+        $order = 'status';
+        break;
+      default:
+        $order = 'created';
+    }
+  }
+  else {
+    $sort = 'ASC';
+    $order = 'title';
+  }
+	
+	 // Query object
+  $query = db_select("node", "n")
+					->condition('n.type','product');
+  // Adding fields
+  $query->fields('n',array('nid','title','status','created','changed'));
+ 
+  // Set order by
+  $query->orderBy($order, $sort);
+ 
+  // Pagination
+  $query = $query->extend('TableSort')->extend('PagerDefault')->limit(10);
+ 
+  // Executing query
+  $result = $query->execute();
+  
+  // Looping for filling the table rows
+  while($data = $result->fetchObject()) {
+    // Adding the rows
+    $rows[] = array($data->nid, $data->title, $data->status, 
+							'created'=>format_date($data->created,'custom','d-m-y'), 
+							'changed'=>format_date($data->changed,'custom','d-m-y')
+						);
+  }
+ 
+  // Setting the output of the field
+  $output = theme_table(
+    array(
+      'header' => $header,
+      'rows' => $rows,
+      'attributes' => array(),
+      'sticky' => true,
+      'caption' => '',
+      'colgroups' => array(),
+      'empty' => t("Table has no row!") // The message to be displayed if table is empty
+    )
+  ).theme('pager');
+ 
+  // Returning the output
+  return $output;
+}
+ 
