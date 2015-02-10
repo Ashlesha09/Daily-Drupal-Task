@@ -1,0 +1,74 @@
+<?php
+/**
+ * Implements hook_schema().
+ */
+ 
+ function dcm_registration_schema(){
+	$schema['user_registration_form']=array(
+	 'description' => t('Stores contact details.'),
+	 'fields' => array(
+	 
+			'name' => array(
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
+        'description' => 'Name.',
+				'default' => '',
+      ),     	
+			'last' => array(
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
+        'description' => 'Last name.',
+				'default' => '',
+      ),  
+			'number' => array(
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
+        'description' => 'number.',
+				'default' => '',
+      ),  
+			'address' => array(
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
+        'description' => 'address.',
+				'default' => '',
+      ), 
+			'age' => array(
+        'type' => 'varchar',
+        'length' => '32',
+        'not null' => TRUE,
+        'description' => 'age.',
+				'default' => '',
+      ), 
+			'country' => array(
+			'type' => 'varchar',
+			'length' => '32',
+			'not null' => TRUE,
+			'description' => 'country.',
+			), 
+	 ),
+	 'primary key' => array('name'),
+	);
+ return $schema;
+ }
+ 
+ /**
+ * Implements hook_install().
+ */
+function dcm_registration_install() {
+  // Create tables.
+  drupal_install_schema('dcm_registration');
+}
+
+
+/**
+ * Implements hook_uninstall().
+ */
+function dcm_registration_uninstall() {
+  // Drop tables.
+  drupal_uninstall_schema('dcm_registration');
+}
+

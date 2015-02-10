@@ -1,0 +1,157 @@
+<?php
+function example_menu() {
+  $items = array();
+  $items['user_registration'] = array(
+    'title' => t('My form'),
+    'page callback' => 'dcm_registration_form',
+    'access arguments' => array('access content'),
+    'description' => t('My form'),
+    'type' => MENU_CALLBACK,
+  );
+  return $items;
+}
+function dcm_registration_form() {
+  // This form calls the form builder function via the
+  // drupal_get_form() function which takes the name of this form builder
+  // function as an argument. It returns the results to display the form. 
+  return drupal_get_form('dcm_registration_my_form');
+}
+function dcm_registration_my_form($form_state) {
+    
+  // This is the first form element. It's a textfield with a label, "Name"
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('First Name'),
+    '#size' => 20,
+    '#maxlength' => 20,	
+		'#required' => TRUE,
+  );
+	
+	$form['last'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Last name'),
+		'#size' => 20,
+		'#required' => TRUE,
+	);
+	
+	$form['number'] = array(
+		'#type' => 'textfield',
+		'#title' => t('Mobile Number'),
+		'#size' => 20,
+		'#required' => TRUE,
+	);
+
+	$form ['address'] = array(
+		'#type' => 'textarea',
+		'#title' => t('Address'),
+		'#maxlength' => 500,
+		'#size' => 20,
+		'#required' => TRUE,
+   );
+	
+	$form ['age'] = array(
+	'#type' => 'textfield',
+	'#title' => t('Age'),
+	'#size' => 20,
+ );
+ 
+	
+	$form['country'] = array(
+	'#type' => 'select',
+	'#title' => t('Country'),
+	'#options' => array(	
+		0 => t('Albania'),
+		1 => t('Algeria'),
+		2 => t('Bolivia'),
+		3 => t('Cameroon'),
+		),
+	'#required' => TRUE,	
+  );
+		
+	$form['copy'] = array(
+  '#type' =>'checkbox', 
+	'#title' => t('Agree to terms and conditions.'),
+	'#required' => TRUE,	
+	);
+	
+		
+		
+// Adds a simple submit button that refreshes the form and clears its contents -- this is the default behavior for forms.
+  $form['submit'] = array(
+		'#type' => 'submit',
+		'#value' => 'Submit',
+  );
+	
+  return $form;
+}
+
+/**
+* Implements hook_block_info().
+*/
+function dcm_registration_block_info() {
+  $blocks = array();
+  $blocks['dcm_registration_block'] = array(
+    'info' => t('A block for registration'),
+  );
+  return $blocks;
+}
+
+/**
+* Implements hook_block_view().
+*/
+function dcm_registration_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'dcm_registration_block':
+      $block['subject'] = '';
+      $block['content'] = _dcm_registration_block_CONTENT();
+      break;
+  }
+  return $block;
+}
+function _dcm_registration_block_CONTENT() {
+  $output = drupal_get_form('dcm_registration_my_form');
+  return $output;
+}
+/**
+* Function to validate the form
+*/
+function  dcm_registration_my_form_validate( $form, &$form_state) {
+	
+	$arrlength = count($form_state['values']);
+	
+	for($x = 0; $x < $arrlength; $x++) {	
+	
+	$name = $form_state['values']['name'];
+	$last = $form_state['values']['last'];
+	$number = $form_state['values']['number'];
+	$age = $form_state['values']['age'];
+	
+
+	if (!preg_match("/^[a-zA-Z ]*$/",$name)) {
+		form_set_error('name', 'First name should contain only characters');
+	}
+	
+	if (!preg_match("/^[a-zA-Z ]*$/",$last)) {
+		form_set_error('last', 'Last name should contain only characters');
+	}
+
+	if (!preg_match("/^\d{10}$/", $number)) {
+		form_set_error('number', 'Enter a valid 10 digit number');
+	}
+	
+	if (!preg_match("/^\d{1,2}$/", $age)) {
+		form_set_error('age', 'Enter valid Age');
+	}
+
+	}
+		
+}
+
+function dcm_registration_my_form_submit($form, &$form_state) {
+
+    drupal_set_message('The form has been submitted.');
+}
+
+

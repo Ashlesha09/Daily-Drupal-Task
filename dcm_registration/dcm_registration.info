@@ -1,0 +1,9 @@
+name = dcm_registration
+description = Form
+package = Core
+version = VERSION
+core = 7.x
+files[] = dcm_registration.install
+files[] = dcm_registration.module
+
+
